@@ -218,4 +218,9 @@ public class GameManager : MonoBehaviour
     {
         _scoreUI.text = score.ToString(); // Update the score UI text
     }
+
+    public void BaseTakeDamage(float damage)
+    {
+        print("Base attacked!");
+    }
 }
