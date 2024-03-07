@@ -11,19 +11,14 @@ public class SandController : BlockController
     private bool _columnUpdate = false;
     private float _timer;
 
-    // Initialization function to set column ID and Y ID
-    public override void Init(int columnID, int yID, SandManager sandManager)
+    private void Start()
     {
         _state = SandState.STATIC;
         _timer = _waitTimer;
-        _blockType = BlockType.SAND;
-        _hp = 1f;
-        _pointValue = 1;
-        base.Init(columnID, yID, sandManager);
     }
 
     void Update()
-    {
+    { 
         switch (_state)
         {
             case SandState.STATIC:
@@ -40,7 +35,7 @@ public class SandController : BlockController
             case SandState.FALL:
                 if (!_columnUpdate)
                 {
-                    _sandManager.UpdateColumn(_columnID, _yID);
+                    _blockData.SandManager.UpdateColumn(_blockData);
                     _columnUpdate = true;
                 }
                 _yVelocity += _gravity * Time.deltaTime;
@@ -114,6 +109,6 @@ public class SandController : BlockController
     // Method to call before the block is destroyed
     public override void BeforeDestroy()
     {
-        _sandManager.UpdateColumn(_columnID, _yID);
+        base.BeforeDestroy();
     }
 }

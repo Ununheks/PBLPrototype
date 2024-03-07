@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class SandManager : MonoBehaviour
@@ -10,16 +11,22 @@ public class SandManager : MonoBehaviour
     [SerializeField] private int _gridHeight = 5;
     [SerializeField] private int _gridDepth = 10;
 
-    private List<List<BlockController>> _sandColumns;
+    private List<List<BlockController>> _blockColumns;
+    private List<List<BlockData>> _blockDataColumns;
 
     void Start()
     {
-        _sandColumns = new List<List<BlockController>>();
+        _blockColumns = new List<List<BlockController>>();
+        _blockDataColumns = new List<List<BlockData>>();
 
-        SpawnSandGrid();
+        GenerateBlocks();
+
+        SetVisibility();
+
+        SpawnBlocks();
     }
 
-    void SpawnSandGrid()
+    private void GenerateBlocks()
     {
         // Check if the provided list of frequencies matches the count of block prefabs
         if (_blockFrequencies.Count != _blockPrefabs.Count)
@@ -36,50 +43,277 @@ public class SandManager : MonoBehaviour
         {
             for (int z = 0; z < _gridDepth; z++)
             {
-                List<BlockController> column = new List<BlockController>();
-                _sandColumns.Add(column);
+                List<BlockData> column = new List<BlockData>();
+                _blockDataColumns.Add(column);
                 columnID++;
                 for (int y = 0; y < _gridHeight; y++)
                 {
-                    // Adjust spawn position to center the grid around (0, 0)
-                    Vector3 spawnPosition = new Vector3(x - offsetX, y + 0.5f, z - offsetZ);
-
                     // Choose a random block prefab index based on the provided frequencies
                     int prefabIndex = ChooseRandomPrefabIndex();
 
-                    // Instantiate the selected block prefab
-                    GameObject blockObject = Instantiate(_blockPrefabs[prefabIndex], spawnPosition, Quaternion.identity);
-                    blockObject.transform.parent = transform;
-
-                    // Get the renderer component of the block object
-                    Renderer renderer = blockObject.GetComponent<Renderer>();
-                    if (renderer != null)
+                    // Create an instance of the appropriate subclass based on the prefabIndex
+                    BlockData blockData = null;
+                    switch (prefabIndex)
                     {
-                        // Generate a random color variation within a certain range
-                        Color colorVariation = new Color(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
-                        renderer.material.color += colorVariation; // Apply the color variation to the material color
+                        case 0: // SandController
+                            blockData = new BlockData(BlockType.SAND, 1,columnID,y,1,this);
+                            break;
+                        case 1: // StoneController
+                            blockData = new BlockData(BlockType.ROCK, 1, columnID, y, 1, this);
+                            break;
+                        // Add more cases for additional types if needed
+                        default:
+                            Debug.LogError("Invalid prefabIndex!");
+                            return;
                     }
 
-                    // Get the block controller component
-                    BlockController blockController = blockObject.GetComponent<BlockController>();
-                    column.Add(blockController);
-
-                    // Initialize column ID, Y ID, and column unique ID for the spawned sand object
-                    if (blockController != null)
-                    {
-                        blockController.Init(columnID, y, this);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("BlockController component not found on the block object.");
-                    }
+                    // Add the instantiated block controller to the list
+                    column.Add(blockData);
                 }
             }
         }
     }
 
+    private void SetVisibility()
+    {
+        foreach (List<BlockData> column in _blockDataColumns)
+        {
+            foreach (BlockData blockData in column)
+            {
+                if (blockData.YID == _gridHeight - 1)
+                    blockData.Visible = true;
+                else
+                {
+                    UpdateBlockVisibility(blockData);
+                }
+            }
+        }
+    }
 
-    int ChooseRandomPrefabIndex()
+    public void UpdateAdjacentVisibility(BlockData blockData)
+    {
+        foreach (BlockData adjacentBlock in GetAdjacentBlockData(blockData))
+        {
+            UpdateBlockVisibility(adjacentBlock);
+            if (adjacentBlock.Visible)
+            {
+                SpawnBlock(adjacentBlock);
+            }
+        }
+    }
+
+    private void SpawnBlock(BlockData blockData)
+    {
+        // Don't spawn blocks that are already destroyed
+        if (blockData.Destroyed)
+        {
+            Debug.Log("Block is already destroyed, skipping spawn.");
+            return;
+        }
+
+        GameObject prefabToInstantiate = null;
+
+        switch (blockData.BlockType)
+        {
+            case BlockType.SAND:
+                prefabToInstantiate = _blockPrefabs[0];
+                break;
+            case BlockType.ROCK:
+                prefabToInstantiate = _blockPrefabs[1];
+                break;
+            // Add more cases for additional types if needed
+            default:
+                Debug.LogError("Invalid BlockType!");
+                return; // Skip instantiation if BlockType is invalid
+        }
+
+        if (prefabToInstantiate != null)
+        {
+            // Instantiate the prefab at the appropriate position
+            GameObject instantiatedPrefab = Instantiate(prefabToInstantiate, new Vector3((blockData.ColumnID / _gridWidth) - (_gridWidth / 2f), blockData.YID + 0.5f, (blockData.ColumnID % _gridDepth) - (_gridDepth / 2f)), Quaternion.identity);
+
+            // Set the SandManager as the parent of the instantiated prefab
+            instantiatedPrefab.transform.parent = transform;
+
+            Renderer renderer = instantiatedPrefab.GetComponent<Renderer>();
+
+            if (renderer != null)
+            {
+                Color colorVariation = new Color(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
+
+                renderer.material.color += colorVariation;
+            }
+                    
+
+            // Attach BlockData to the instantiated prefab
+            BlockController blockController = instantiatedPrefab.GetComponent<BlockController>();
+            if (blockController != null)
+            {
+                blockController.BlockData = blockData;
+                // Add the BlockController to the appropriate list
+                _blockColumns[blockData.ColumnID].Add(blockController);
+            }
+            else
+            {
+                Debug.LogError("BlockController component not found on the instantiated prefab: " + prefabToInstantiate.name);
+            }
+        }
+    }
+
+
+    private List<BlockData> GetAdjacentBlockData(BlockData blockData)
+    {
+        int x = blockData.ColumnID / _gridWidth;
+        int y = blockData.YID;
+        int z = blockData.ColumnID % _gridDepth;
+
+        List<BlockData> adjacentBlocks = new List<BlockData>();
+
+        if (IsValidBlockPosition(x + 1, y, z) && !_blockDataColumns[(x + 1) * _gridWidth + z][y].Visible)
+            adjacentBlocks.Add(_blockDataColumns[(x + 1) * _gridWidth + z][y]);
+        if (IsValidBlockPosition(x - 1, y, z) && !_blockDataColumns[(x - 1) * _gridWidth + z][y].Visible)
+            adjacentBlocks.Add(_blockDataColumns[(x - 1) * _gridWidth + z][y]);
+        if (IsValidBlockPosition(x, y + 1, z) && !_blockDataColumns[x * _gridWidth + z][y + 1].Visible)
+            adjacentBlocks.Add(_blockDataColumns[x * _gridWidth + z][y + 1]);
+        if (IsValidBlockPosition(x, y - 1, z) && !_blockDataColumns[x * _gridWidth + z][y - 1].Visible)
+            adjacentBlocks.Add(_blockDataColumns[x * _gridWidth + z][y - 1]);
+        if (IsValidBlockPosition(x, y, z + 1) && !_blockDataColumns[x * _gridWidth + z + 1][y].Visible)
+            adjacentBlocks.Add(_blockDataColumns[x * _gridWidth + z + 1][y]);
+        if (IsValidBlockPosition(x, y, z - 1) && !_blockDataColumns[x * _gridWidth + z - 1][y].Visible)
+            adjacentBlocks.Add(_blockDataColumns[x * _gridWidth + z - 1][y]);
+
+        return adjacentBlocks;
+    }
+
+    private bool IsValidBlockPosition(int x, int y, int z)
+    {
+        return x >= 0 && x < _gridWidth && y >= 0 && y < _gridHeight && z >= 0 && z < _gridDepth;
+    }
+
+    private void UpdateBlockVisibility(BlockData blockData)
+    {
+        bool leftBlock = false;
+        bool rightBlock = false;
+        bool topBlock = false;
+        bool bottomBlock = false;
+        bool frontBlock = false;
+        bool backBlock = false;
+
+        int x = blockData.ColumnID / _gridWidth;
+        int y = blockData.YID;
+        int z = blockData.ColumnID % _gridDepth;
+
+        if (x + 1 < _gridWidth)
+            rightBlock = _blockDataColumns[(x + 1) * _gridWidth + z][y] != null && !_blockDataColumns[(x + 1) * _gridWidth + z][y].Destroyed;
+        else
+            rightBlock = true;
+
+        if (x - 1 >= 0)
+            leftBlock = _blockDataColumns[(x - 1) * _gridWidth + z][y] != null && !_blockDataColumns[(x - 1) * _gridWidth + z][y].Destroyed;
+        else
+            leftBlock = true;
+
+        if (y + 1 < _gridHeight)
+            topBlock = _blockDataColumns[x * _gridWidth + z][y + 1] != null && !_blockDataColumns[x * _gridWidth + z][y + 1].Destroyed;
+        else
+            topBlock = true;
+
+        if (y - 1 >= 0)
+            bottomBlock = _blockDataColumns[x * _gridWidth + z][y - 1] != null && !_blockDataColumns[x * _gridWidth + z][y - 1].Destroyed;
+        else
+            bottomBlock = true;
+
+        if (z + 1 < _gridDepth)
+            frontBlock = _blockDataColumns[x * _gridWidth + z + 1][y] != null && !_blockDataColumns[x * _gridWidth + z + 1][y].Destroyed;
+        else
+            frontBlock = true;
+
+        if (z - 1 >= 0)
+            backBlock = _blockDataColumns[x * _gridWidth + z - 1][y] != null && !_blockDataColumns[x * _gridWidth + z - 1][y].Destroyed;
+        else
+            backBlock = true;
+
+        // If any of the adjacent blocks are absent or destroyed, set visibility to true
+        if (!leftBlock || !rightBlock || !topBlock || !bottomBlock || !frontBlock || !backBlock)
+        {
+            blockData.Visible = true;
+        }
+        else
+        {
+            blockData.Visible = false;
+        }
+    }
+
+
+    public void SpawnBlocks()
+    {
+        // Clear the blockList before spawning blocks
+        _blockColumns.Clear();
+
+        foreach (List<BlockData> column in _blockDataColumns)
+        {
+            List<BlockController> columnBlocks = new List<BlockController>();
+
+            foreach (BlockData blockData in column)
+            {
+                // Check if the block is visible
+                if (!blockData.Visible)
+                    continue;
+
+                GameObject prefabToInstantiate = null;
+
+                switch (blockData.BlockType)
+                {
+                    case BlockType.SAND:
+                        prefabToInstantiate = _blockPrefabs[0];
+                        break;
+                    case BlockType.ROCK:
+                        prefabToInstantiate = _blockPrefabs[1];
+                        break;
+                    // Add more cases for additional types if needed
+                    default:
+                        Debug.LogError("Invalid BlockType!");
+                        continue; // Skip to the next block if BlockType is invalid
+                }
+
+                if (prefabToInstantiate != null)
+                {
+                    // Instantiate the prefab at the appropriate position
+                    GameObject instantiatedPrefab = Instantiate(prefabToInstantiate, new Vector3((blockData.ColumnID / _gridWidth) - (_gridWidth / 2f), blockData.YID + 0.5f, (blockData.ColumnID % _gridDepth) - (_gridDepth / 2f)), Quaternion.identity);
+
+                    // Set the SandManager as the parent of the instantiated prefab
+                    instantiatedPrefab.transform.parent = transform;
+
+                    Renderer renderer = instantiatedPrefab.GetComponent<Renderer>();
+
+                    if (renderer != null)
+                    {
+                        Color colorVariation = new Color(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
+
+                        renderer.material.color += colorVariation;
+                    }
+
+                    // Attach BlockData to the instantiated prefab
+                    BlockController blockController = instantiatedPrefab.GetComponent<BlockController>();
+                    if (blockController != null)
+                    {
+                        blockController.BlockData = blockData;
+                        columnBlocks.Add(blockController); // Add the BlockController to the columnBlocks list
+                    }
+                    else
+                    {
+                        Debug.LogError("BlockController component not found on the instantiated prefab: " + prefabToInstantiate.name);
+                    }
+                }
+            }
+
+            // Add the columnBlocks list to the blockList
+            _blockColumns.Add(columnBlocks);
+        }
+    }
+
+
+    private int ChooseRandomPrefabIndex()
     {
         // Calculate total frequency
         float totalFrequency = 0f;
@@ -116,9 +350,9 @@ public class SandManager : MonoBehaviour
     }
 
 
-    public void UpdateColumn(int columnID, int yID)
+    public void UpdateColumn(BlockData blockData)
     {
-        BlockController foundBlock = FindNextBlock(columnID, yID);
+        BlockController foundBlock = FindNextBlock(blockData.ColumnID, blockData.YID);
 
         if (foundBlock is SandController)
         {
@@ -129,26 +363,20 @@ public class SandManager : MonoBehaviour
 
     BlockController FindNextBlock(int columnID, int yID)
     {
-        List<BlockController> column = _sandColumns[columnID];
+        List<BlockController> column = _blockColumns[columnID];
         BlockController foundBlock = null;
         foreach (BlockController blockController in column)
         {
-            if (blockController.YID > yID)
+            if (blockController.BlockData.YID > yID)
             {
-                if (foundBlock == null || blockController.YID < foundBlock.YID)
+                if (foundBlock == null || blockController.BlockData.YID < foundBlock.BlockData.YID)
                 {
                     foundBlock = blockController;
                 }
             }
         }
 
-        if (foundBlock != null)
-        {
-            return foundBlock;
-        }
-        else
-        {
-            return null;
-        }
+        return foundBlock;
     }
+
 }

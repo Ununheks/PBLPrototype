@@ -4,33 +4,28 @@ using UnityEngine;
 
 public abstract class BlockController : MonoBehaviour
 {
-    protected BlockType _blockType;
-    protected int _pointValue;
-    protected int _columnID;
-    protected int _yID;
-    protected float _hp;
-    protected float _startHp;
-    protected SandManager _sandManager;
+    protected BlockData _blockData; // Protected field
 
-    public int ColumnID { get => _columnID; }
-    public int YID { get => _yID; }
-
-    public virtual void Init(int columnID, int yID, SandManager sandManager)
+    // Public property to expose _blockData
+    public BlockData BlockData
     {
-        _columnID = columnID;
-        _yID = yID;
-        _sandManager = sandManager;
-        _startHp = _hp;
+        get { return _blockData; }
+        set { _blockData = value; }
     }
 
     // Abstract method to be implemented by child classes
-    public abstract void BeforeDestroy();
+    public virtual void BeforeDestroy()
+    {
+        _blockData.Destroyed = true;
+        _blockData.SandManager.UpdateColumn(_blockData);
+        _blockData.SandManager.UpdateAdjacentVisibility(_blockData);
+    }
 
     public virtual void TakeDamage(float damage)
     {
-        _hp -= damage;
+        _blockData.HP -= damage;
 
-        float hpPercentage = _hp / _startHp;
+        float hpPercentage = _blockData.HP / _blockData.StartHP;
 
         // Get the renderer component
         Renderer renderer = GetComponent<Renderer>();
@@ -51,7 +46,7 @@ public abstract class BlockController : MonoBehaviour
         }
 
         // Check if HP is less than or equal to zero
-        if (_hp <= 0)
+        if (_blockData.HP <= 0)
         {
             // Get the GameManager instance
             GameManager gameManager = GameManager.Instance;
@@ -60,7 +55,7 @@ public abstract class BlockController : MonoBehaviour
             if (gameManager != null)
             {
                 // Call the AddPoints method with the specified points value
-                gameManager.AddPoints(_pointValue);
+                gameManager.AddPoints(_blockData.PointValue);
             }
             BeforeDestroy();
             // Destroy the block if HP is zero or below
