@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UpgradeSystem : MonoBehaviour
 {
+    public GameManager _gameManager;
     public Button button1;
     public Button button2;
     public GameObject player;
@@ -44,12 +45,20 @@ public class UpgradeSystem : MonoBehaviour
 
     void UpgradeDamage()
     {
-        Debug.Log("Upgraded damage");
+        if (_gameManager.GetScore() >= 20)
+        {
+            _gameManager.AddPoints(-20);
+            Debug.Log("Upgraded damage");
+        }
     }
 
     void UpgradeSpeed()
     {
-        Debug.Log("Upgraded Speed");
+        if (_gameManager.GetScore() >= 20)
+        {
+            _gameManager.AddPoints(-20);
+            Debug.Log("Upgraded Speed");
+        }    
     }
     
     void SetButtonVisibility(bool isVisible)

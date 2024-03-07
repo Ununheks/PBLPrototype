@@ -232,6 +232,10 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Dome has been destroyed");
         }
+    }
 
+    public float GetScore()
+    {
+        return _score;
     }
 }
