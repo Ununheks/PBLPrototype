@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour
 {
     private float speed = 1;
     private Vector3 target = new Vector3(0, 13.5f, 0);
-    private int hp = 100;
+    private float hp = 100;
 
     public GameManager _gameManager;
 
@@ -68,7 +68,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         hp -= damage;
         StartCoroutine(ChangeDamageColor());
