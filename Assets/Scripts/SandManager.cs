@@ -105,9 +105,9 @@ public class SandManager : MonoBehaviour
     private void SpawnBlock(BlockData blockData)
     {
         // Don't spawn blocks that are already destroyed
-        if (blockData.Destroyed)
+        if (blockData.BlockType == BlockType.EMPTY)
         {
-            Debug.Log("Block is already destroyed, skipping spawn.");
+            Debug.Log("Block is empty, skipping spawn.");
             return;
         }
 
@@ -139,7 +139,7 @@ public class SandManager : MonoBehaviour
 
             if (renderer != null)
             {
-                Color colorVariation = new Color(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
+                Color colorVariation = new Color(Random.Range(-0.02f, 0.02f), Random.Range(-0.02f, 0.02f), Random.Range(-0.02f, 0.02f));
 
                 renderer.material.color += colorVariation;
             }
@@ -204,36 +204,36 @@ public class SandManager : MonoBehaviour
         int z = blockData.ColumnID % _gridDepth;
 
         if (x + 1 < _gridWidth)
-            rightBlock = _blockDataColumns[(x + 1) * _gridWidth + z][y] != null && !_blockDataColumns[(x + 1) * _gridWidth + z][y].Destroyed;
+            rightBlock = _blockDataColumns[(x + 1) * _gridWidth + z][y] != null && _blockDataColumns[(x + 1) * _gridWidth + z][y].BlockType != BlockType.EMPTY;
         else
             rightBlock = true;
 
         if (x - 1 >= 0)
-            leftBlock = _blockDataColumns[(x - 1) * _gridWidth + z][y] != null && !_blockDataColumns[(x - 1) * _gridWidth + z][y].Destroyed;
+            leftBlock = _blockDataColumns[(x - 1) * _gridWidth + z][y] != null && _blockDataColumns[(x - 1) * _gridWidth + z][y].BlockType != BlockType.EMPTY;
         else
             leftBlock = true;
 
         if (y + 1 < _gridHeight)
-            topBlock = _blockDataColumns[x * _gridWidth + z][y + 1] != null && !_blockDataColumns[x * _gridWidth + z][y + 1].Destroyed;
+            topBlock = _blockDataColumns[x * _gridWidth + z][y + 1] != null && _blockDataColumns[x * _gridWidth + z][y + 1].BlockType != BlockType.EMPTY;
         else
             topBlock = true;
 
         if (y - 1 >= 0)
-            bottomBlock = _blockDataColumns[x * _gridWidth + z][y - 1] != null && !_blockDataColumns[x * _gridWidth + z][y - 1].Destroyed;
+            bottomBlock = _blockDataColumns[x * _gridWidth + z][y - 1] != null && _blockDataColumns[x * _gridWidth + z][y - 1].BlockType != BlockType.EMPTY;
         else
             bottomBlock = true;
 
         if (z + 1 < _gridDepth)
-            frontBlock = _blockDataColumns[x * _gridWidth + z + 1][y] != null && !_blockDataColumns[x * _gridWidth + z + 1][y].Destroyed;
+            frontBlock = _blockDataColumns[x * _gridWidth + z + 1][y] != null && _blockDataColumns[x * _gridWidth + z + 1][y].BlockType != BlockType.EMPTY;
         else
             frontBlock = true;
 
         if (z - 1 >= 0)
-            backBlock = _blockDataColumns[x * _gridWidth + z - 1][y] != null && !_blockDataColumns[x * _gridWidth + z - 1][y].Destroyed;
+            backBlock = _blockDataColumns[x * _gridWidth + z - 1][y] != null && _blockDataColumns[x * _gridWidth + z - 1][y].BlockType != BlockType.EMPTY;
         else
             backBlock = true;
 
-        // If any of the adjacent blocks are absent or destroyed, set visibility to true
+        // If any of the adjacent blocks are absent or not empty, set visibility to true
         if (!leftBlock || !rightBlock || !topBlock || !bottomBlock || !frontBlock || !backBlock)
         {
             blockData.Visible = true;
@@ -243,6 +243,7 @@ public class SandManager : MonoBehaviour
             blockData.Visible = false;
         }
     }
+
 
 
     public void SpawnBlocks()
@@ -288,7 +289,7 @@ public class SandManager : MonoBehaviour
 
                     if (renderer != null)
                     {
-                        Color colorVariation = new Color(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f));
+                        Color colorVariation = new Color(Random.Range(-0.02f, 0.02f), Random.Range(-0.02f, 0.02f), Random.Range(-0.02f, 0.02f));
 
                         renderer.material.color += colorVariation;
                     }
@@ -367,8 +368,14 @@ public class SandManager : MonoBehaviour
         BlockController foundBlock = null;
         foreach (BlockController blockController in column)
         {
-            if (blockController.BlockData.YID > yID)
+            // Check if the block's YID is greater than the provided yID
+            // and if the block's BlockType is not EMPTY or STONE
+            if (blockController.BlockData.YID > yID &&
+                blockController.BlockData.BlockType != BlockType.EMPTY &&
+                blockController.BlockData.BlockType != BlockType.ROCK)
             {
+                // If foundBlock is null or the current block's YID is less than the foundBlock's YID,
+                // update foundBlock to the current block
                 if (foundBlock == null || blockController.BlockData.YID < foundBlock.BlockData.YID)
                 {
                     foundBlock = blockController;

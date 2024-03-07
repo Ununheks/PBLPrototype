@@ -35,7 +35,9 @@ public class SandController : BlockController
             case SandState.FALL:
                 if (!_columnUpdate)
                 {
+                    _blockData.BlockType = BlockType.EMPTY;
                     _blockData.SandManager.UpdateColumn(_blockData);
+                    _blockData.SandManager.UpdateAdjacentVisibility(_blockData);
                     _columnUpdate = true;
                 }
                 _yVelocity += _gravity * Time.deltaTime;
@@ -97,6 +99,7 @@ public class SandController : BlockController
                 if (newPosition.y % 1 == 0)
                     newPosition.y += 0.5f;
                 transform.position = newPosition;
+                _blockData.BlockType = BlockType.SAND;
                 break; // Exit the loop once a collision is detected
             }
         }

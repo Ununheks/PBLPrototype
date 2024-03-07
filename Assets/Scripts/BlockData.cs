@@ -13,7 +13,6 @@ public class BlockData
     public float StartHP { get; set; }
     public SandManager SandManager { get; set; }
     public bool Visible { get; set; }
-    public bool Destroyed { get; set; }
 
     public BlockData(BlockType blockType, int pointValue, int columnID, int yID, float startHP, SandManager sandManager)
     {
@@ -24,7 +23,6 @@ public class BlockData
         HP = startHP;
         StartHP = startHP;
         SandManager = sandManager;
-        Destroyed = false;
     }
 }
 

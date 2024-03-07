@@ -290,10 +290,10 @@ MonoBehaviour:
   - {fileID: 4153762212810033107, guid: c1896896430967d448bb9b2578f55f02, type: 3}
   - {fileID: 2683619269829791404, guid: 07c93253435c23b46b8f12e290f77a34, type: 3}
   _blockFrequencies:
-  - 0
-  - 1
+  - 0.1
+  - 0.9
   _gridWidth: 50
-  _gridHeight: 30
+  _gridHeight: 50
   _gridDepth: 50
 --- !u!4 &24519900
 Transform:

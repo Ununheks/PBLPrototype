@@ -16,7 +16,7 @@ public abstract class BlockController : MonoBehaviour
     // Abstract method to be implemented by child classes
     public virtual void BeforeDestroy()
     {
-        _blockData.Destroyed = true;
+        _blockData.BlockType = BlockType.EMPTY;
         _blockData.SandManager.UpdateColumn(_blockData);
         _blockData.SandManager.UpdateAdjacentVisibility(_blockData);
     }
