@@ -13,11 +13,7 @@ public class DomeController : MonoBehaviour
 
     void Update()
     {
-        //DEBUG
-        if (Input.GetKeyDown("l"))
-        {
-            TakeDamage(50);
-        }
+        
     }
     
     public void TakeDamage(int damage)

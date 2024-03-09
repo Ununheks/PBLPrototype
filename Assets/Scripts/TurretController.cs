@@ -32,4 +32,14 @@ public class TurretController : MonoBehaviour
     {
         currentEnemy.GetComponent<EnemyController>().TakeDamage(turretDamage);
     }
+    
+    public void SetTurretDamage(float damage)
+    {
+        turretDamage = damage;
+    }
+    
+    public void SetTurretSpeed(float speed)
+    {
+        reloadSpeed = speed;
+    }
 }

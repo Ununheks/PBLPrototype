@@ -6,10 +6,11 @@ using UnityEngine.UI;
 public class UpgradeSystem : MonoBehaviour
 {
     public GameManager _gameManager;
-    public Button button1;
-    public Button button2;
     public GameObject player;
     public GameObject buttonObject;
+    public TurretManager _TurretManager;
+    public Button button1;
+    public Button button2;
     public float interactionDistance = 3f;
 
     private bool isInRange = false;
@@ -28,11 +29,11 @@ public class UpgradeSystem : MonoBehaviour
         if (isInRange)
         {
             SetButtonVisibility(true);
-            if (Input.GetKeyDown(KeyCode.N))
+            if (Input.GetKeyDown(KeyCode.Z))
             {
                 button1.onClick.Invoke();
             }
-            else if (Input.GetKeyDown(KeyCode.M))
+            else if (Input.GetKeyDown(KeyCode.X))
             {
                 button2.onClick.Invoke();
             }
@@ -49,6 +50,10 @@ public class UpgradeSystem : MonoBehaviour
         {
             _gameManager.AddPoints(-20);
             Debug.Log("Upgraded damage");
+            foreach (GameObject turret in _TurretManager.turrets)
+            {
+                turret.GetComponent<TurretController>().SetTurretDamage(turret.GetComponent<TurretController>().turretDamage + 20); 
+            }
         }
     }
 
@@ -58,6 +63,11 @@ public class UpgradeSystem : MonoBehaviour
         {
             _gameManager.AddPoints(-20);
             Debug.Log("Upgraded Speed");
+            foreach (GameObject turret in _TurretManager.turrets)
+            {
+                if (turret.GetComponent<TurretController>().reloadSpeed >= 0.2)
+                turret.GetComponent<TurretController>().SetTurretSpeed(turret.GetComponent<TurretController>().reloadSpeed - 0.05f); 
+            }
         }    
     }
     

@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour
 {
     private float speed = 1;
     private Vector3 target = new Vector3(0, 13.5f, 0);
-    private float hp = 100;
+    private float hp = 30;
 
     public GameManager _gameManager;
 
@@ -25,12 +25,6 @@ public class EnemyController : MonoBehaviour
     
     void Update()
     {
-        //DEBUG
-        if (Input.GetKeyDown("l"))
-        {
-            TakeDamage(20);
-        }
-        
         switch (_state)
         {
             case EnemyState.WALKING:
