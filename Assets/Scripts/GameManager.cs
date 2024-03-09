@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _gameOverScreen;
     [SerializeField] private List<int> _powerUpCosts;
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private DomeController _domeController;
 
     private static GameManager _instance;
 
@@ -221,6 +222,20 @@ public class GameManager : MonoBehaviour
 
     public void BaseTakeDamage(float damage)
     {
-        print("Base attacked!");
+        if (_domeController.getHealth() > 0)
+        {
+            _domeController.TakeDamage(20);
+            print(_domeController.getHealth());
+            print("Base attacked!");
+        }
+        else
+        {
+            Debug.Log("Dome has been destroyed");
+        }
+    }
+
+    public float GetScore()
+    {
+        return _score;
     }
 }
