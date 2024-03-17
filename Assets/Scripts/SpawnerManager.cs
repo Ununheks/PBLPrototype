@@ -10,7 +10,7 @@ public class SpawnerManager : MonoBehaviour
     private int innerSquareRange = 20;
 
     public GameObject enemyPrefab;
-
+    
     public List<GameObject> enemies;
 
     [SerializeField] private GameManager _gameManager;

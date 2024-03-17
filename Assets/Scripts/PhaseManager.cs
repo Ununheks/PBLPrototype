@@ -9,10 +9,12 @@ using Unity.AI.Navigation;
 public class PhaseManager : MonoBehaviour
 {
     [SerializeField] private int actualPhaze;
+    [SerializeField] private int waveNumber = 0;
     [SerializeField] private SandManager _sandManager;
     [SerializeField] private SpawnerManager _spawnerManager;
     [SerializeField] private GameObject _doors;
     [SerializeField] private TextMeshProUGUI _timeUI;
+    [SerializeField] private TextMeshProUGUI _phaseUI;
     [SerializeField] private float _timeLeft;
     [SerializeField] private GameObject _player;
     [SerializeField] private int domeSize;
@@ -60,12 +62,14 @@ public class PhaseManager : MonoBehaviour
                     StartCoroutine(ReturnControll());
                 }
                 _sphereCollider.SetActive(true);
+                waveNumber += 1;
                 StartCoroutine(SpawnWaves(3));
                 _timeLeft = 20;
                 break;
             default:
                 break;
         }
+        updatePhaseUI();
     }
 
     IEnumerator SpawnWaves(int numberOfWaves)
@@ -109,5 +113,22 @@ public class PhaseManager : MonoBehaviour
         int minutes = Mathf.FloorToInt(time / 60f);
         int seconds = Mathf.FloorToInt(time % 60f);
         _timeUI.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    private void updatePhaseUI()
+    {
+        switch (actualPhaze)
+        {
+            case 1:
+                _phaseUI.text = "Digging Phase";
+                break;
+            case 2:
+                _phaseUI.text = "Setup Phase";
+                break;
+            case 3:
+                _phaseUI.text = string.Format("Wave: ", waveNumber);
+                break;
+        }
+        
     }
 }
