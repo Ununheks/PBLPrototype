@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private float _gameTime;
+    //[SerializeField] private float _gameTime;
     [SerializeField] private float _score;
-    [SerializeField] private float _timeLeft;
+    //[SerializeField] private float _timeLeft;
     [SerializeField] private float _totalScore; // Variable to hold the total score
-    [SerializeField] private TextMeshProUGUI _timeUI;
+    //[SerializeField] private TextMeshProUGUI _timeUI;
     [SerializeField] private TextMeshProUGUI _scoreUI; // Add reference to the score UI text
     [SerializeField] private TextMeshProUGUI _totalScoreUI; // Reference to the total score UI text
     [SerializeField] private GameObject _gameOverScreen;
@@ -50,14 +50,14 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        _timeLeft = _gameTime;
-        UpdateTimeUI(_gameTime);
+        //_timeLeft = _gameTime;
+        //UpdateTimeUI(_gameTime);
         UpdateScoreUI(_score); // Update the score UI text when the game starts
     }
 
     void Update()
     {
-        if (_timeLeft > 0)
+        /*if (_timeLeft > 0)
         {
             _timeLeft -= Time.deltaTime;
             UpdateTimeUI(_timeLeft);
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
                 // Set the time left UI to "00:00"
                 _timeUI.text = "00:00";
             }
-        }
+        }*/
 
         // Check if the player presses keys 1 through 5
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -178,8 +178,8 @@ public class GameManager : MonoBehaviour
                 {
                     case 0:
                         // Add 10 seconds to the time left
-                        _timeLeft += 10;
-                        UpdateTimeUI(_timeLeft);
+                        //_timeLeft += 10;
+                        //UpdateTimeUI(_timeLeft);
                         break;
                     case 4:
                         playerController.AllowHold(); // Call AllowHold function in PlayerController
@@ -205,7 +205,7 @@ public class GameManager : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(time / 60f);
         int seconds = Mathf.FloorToInt(time % 60f);
-        _timeUI.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        //_timeUI.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     public void AddPoints(int value)
