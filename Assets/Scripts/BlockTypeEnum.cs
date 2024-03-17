@@ -2,5 +2,7 @@ public enum BlockType
 {
     EMPTY,
     SAND,
-    ROCK
+    ROCK,
+    BEDROCK,
+    AIR
 }

@@ -53,18 +53,42 @@ public class SandManager : MonoBehaviour
 
                     // Create an instance of the appropriate subclass based on the prefabIndex
                     BlockData blockData = null;
-                    switch (prefabIndex)
+
+                    int SphereRange = 10;
+                    
+                    if (y == _gridHeight - 3 && !((x == offsetX || x == offsetX + 1 || x == offsetX - 1) && (z == offsetZ || z == offsetZ + 1 || z == offsetZ - 1)))
                     {
-                        case 0: // SandController
-                            blockData = new BlockData(BlockType.SAND, 1,columnID,y,1,this);
-                            break;
-                        case 1: // StoneController
-                            blockData = new BlockData(BlockType.ROCK, 1, columnID, y, 1, this);
-                            break;
-                        // Add more cases for additional types if needed
-                        default:
-                            Debug.LogError("Invalid prefabIndex!");
-                            return;
+                        blockData = new BlockData(BlockType.BEDROCK, 1, columnID, y, 2000, this);
+                    }
+                    else if ((x == offsetX || x == offsetX + 1 || x == offsetX - 1) && (y == _gridHeight - 2 || y == _gridHeight - 1) && (z == offsetZ || z == offsetZ + 1 || z == offsetZ - 1))
+                    {
+                        blockData = new BlockData(BlockType.AIR, 1, columnID, y, 2000, this);
+                    }
+                    else if (((x >= offsetX - SphereRange) && (x <= offsetX + SphereRange)) && (y == _gridHeight - 1 || y == _gridHeight - 2) && ((z >= offsetZ - SphereRange) && (z <= offsetZ + SphereRange)))
+                    {
+                        blockData = new BlockData(BlockType.BEDROCK, 1, columnID, y, 2000, this);
+                    }
+                    else
+                    {
+                        switch (prefabIndex)
+                        {
+                            case 0: // SandController
+                                blockData = new BlockData(BlockType.SAND, 1, columnID, y, 1, this);
+                                break;
+                            case 1: // StoneController
+                                blockData = new BlockData(BlockType.ROCK, 1, columnID, y, 1, this);
+                                break;
+                            case 2:
+                                blockData = new BlockData(BlockType.BEDROCK, 1, columnID, y, 2000, this);
+                                break;
+                            case 3:
+                                blockData = new BlockData(BlockType.AIR, 1, columnID, y, 2000, this);
+                                break;
+                            // Add more cases for additional types if needed
+                            default:
+                                Debug.LogError("Invalid prefabIndex!");
+                                return;
+                        }
                     }
 
                     // Add the instantiated block controller to the list
@@ -81,10 +105,28 @@ public class SandManager : MonoBehaviour
             foreach (BlockData blockData in column)
             {
                 if (blockData.YID == _gridHeight - 1)
+                {
                     blockData.Visible = true;
+                }
                 else
                 {
                     UpdateBlockVisibility(blockData);
+                }
+            }
+        }
+        
+        foreach (List<BlockData> column in _blockDataColumns)
+        {
+            foreach (BlockData blockData in column)
+            {
+                if (blockData.BlockType == BlockType.AIR)
+                {
+                    //UpdateAdjacentVisibility(blockData);
+                    
+                    foreach (BlockData adjacentBlock in GetAdjacentBlockData(blockData))
+                    {
+                        adjacentBlock.Visible = true;
+                    }
                 }
             }
         }
@@ -120,6 +162,12 @@ public class SandManager : MonoBehaviour
                 break;
             case BlockType.ROCK:
                 prefabToInstantiate = _blockPrefabs[1];
+                break;
+            case BlockType.BEDROCK:
+                prefabToInstantiate = _blockPrefabs[2];
+                break;
+            case BlockType.AIR:
+                prefabToInstantiate = _blockPrefabs[3];
                 break;
             // Add more cases for additional types if needed
             default:
@@ -270,6 +318,12 @@ public class SandManager : MonoBehaviour
                         break;
                     case BlockType.ROCK:
                         prefabToInstantiate = _blockPrefabs[1];
+                        break;
+                    case BlockType.BEDROCK:
+                        prefabToInstantiate = _blockPrefabs[2];
+                        break;
+                    case BlockType.AIR:
+                        prefabToInstantiate = _blockPrefabs[3];
                         break;
                     // Add more cases for additional types if needed
                     default:
