@@ -6,8 +6,8 @@ using Random = UnityEngine.Random;
 
 public class SpawnerManager : MonoBehaviour
 {
-    private int spawnerRange = 20;
-    private int innerSquareRange = 5;
+    private int spawnerRange = 50;
+    private int innerSquareRange = 20;
 
     public GameObject enemyPrefab;
 
@@ -19,10 +19,16 @@ public class SpawnerManager : MonoBehaviour
         //DEBUG
         if (Input.GetKeyDown("p"))
         {
-            for (int i = 0; i < 1; i++)
-            {
-                SpawnEnemy();
-            }
+            SpawnWave();
+        }
+    }
+
+    public void SpawnWave()
+    {
+        int numberOfEnemies = Random.Range(3, 6);
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            SpawnEnemy();
         }
     }
 

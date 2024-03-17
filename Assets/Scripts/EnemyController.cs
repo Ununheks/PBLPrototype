@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
     private float speed = 1;
     private Vector3 target = new Vector3(0, 13.5f, 0);
     private float hp = 30;
+    private float domeRadius = 11;
 
     public GameManager _gameManager;
 
@@ -19,8 +21,9 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         _state = EnemyState.WALKING;
-        transform.LookAt(target);
+        //transform.LookAt(target);
         _timer = _waitTimer;
+        GetComponent<NavMeshAgent>().SetDestination(target);
     }
     
     void Update()
@@ -28,8 +31,8 @@ public class EnemyController : MonoBehaviour
         switch (_state)
         {
             case EnemyState.WALKING:
-                transform.position += transform.forward * (speed * Time.deltaTime);
-                if (Vector3.Distance(target, transform.position) <= 3)
+                //transform.position += transform.forward * (speed * Time.deltaTime);
+                if (Vector3.Distance(target, transform.position) <= domeRadius)
                 {
                     _state = EnemyState.ATTACKING;
                 }
@@ -45,6 +48,7 @@ public class EnemyController : MonoBehaviour
                 break;
             
             case EnemyState.ATTACKING:
+                GetComponent<NavMeshAgent>().enabled = false;
                 _gameManager.BaseTakeDamage(20);
                 _timer = _waitTimer;
                 _state = EnemyState.COOLDOWN;

@@ -3,17 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Unity.AI;
+using Unity.AI.Navigation;
 
 public class PhaseManager : MonoBehaviour
 {
     [SerializeField] private int actualPhaze;
     [SerializeField] private SandManager _sandManager;
+    [SerializeField] private SpawnerManager _spawnerManager;
     [SerializeField] private GameObject _doors;
     [SerializeField] private TextMeshProUGUI _timeUI;
     [SerializeField] private float _timeLeft;
     [SerializeField] private GameObject _player;
     [SerializeField] private int domeSize;
     [SerializeField] private GameObject _sphereCollider;
+
+    [SerializeField] private NavMeshSurface _navMeshSurface;
     private void Start()
     {
         _doors = Instantiate(_doors, new Vector3(0, 12.4f, 0), Quaternion.identity);
@@ -26,13 +31,13 @@ public class PhaseManager : MonoBehaviour
         switch (phase)
         {
             case 1:
-                print("zmieniono na faze kopania");
+                //print("zmieniono na faze kopania");
                 _doors.SetActive(false);
                 _sphereCollider.SetActive(true);
                 _timeLeft = 30;
                 break;
             case 2:
-                print("zmieniono na faze ustawiania");
+                //print("zmieniono na faze ustawiania");
                 _doors.SetActive(true);
                 if (_player.transform.position.y <= 13)
                 {
@@ -44,8 +49,10 @@ public class PhaseManager : MonoBehaviour
                 _timeLeft = 30;
                 break;
             case 3:
-                print("zmieniono na faze walki");
+                //print("zmieniono na faze walki");
 
+                _navMeshSurface.BuildNavMesh();
+                
                 if (Vector3.Distance(_player.transform.position, new Vector3(0, 14, 0)) > domeSize)
                 {
                     _player.GetComponent<PlayerMovement>().enabled = false;
@@ -53,10 +60,21 @@ public class PhaseManager : MonoBehaviour
                     StartCoroutine(ReturnControll());
                 }
                 _sphereCollider.SetActive(true);
-                _timeLeft = 10;
+                StartCoroutine(SpawnWaves(3));
+                _timeLeft = 20;
                 break;
             default:
                 break;
+        }
+    }
+
+    IEnumerator SpawnWaves(int numberOfWaves)
+    {
+        for (int i = 0; i < numberOfWaves; i++)
+        {
+            _spawnerManager.SpawnWave();
+            print("test");
+            yield return new WaitForSeconds(3);
         }
     }
     
