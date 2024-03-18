@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12080,6 +12080,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   _highlightRadius: 0.5
+  _turretManager: {fileID: 1744777626}
 --- !u!1 &168859847
 GameObject:
   m_ObjectHideFlags: 0
@@ -16092,11 +16093,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turretPrefab: {fileID: 2338241480012731577, guid: 60b599c7891944942bb9a71cb077a353, type: 3}
-  turretPreviewPrefab: {fileID: 0}
+  turretPreviewPrefab: {fileID: 2338241480012731577, guid: 7304709e82082d844bebfe497a3efbf6, type: 3}
   _playerCamera: {fileID: 525673109}
   _spawnerManager: {fileID: 1913180166}
   turrets: []
   previewTurret: []
+  newRotation: {x: 0, y: 0, z: 0, w: 0}
+  _isLookingAtTurret: 0
+  _lastLookedAtTurret: 0
 --- !u!4 &1744777627
 Transform:
   m_ObjectHideFlags: 0

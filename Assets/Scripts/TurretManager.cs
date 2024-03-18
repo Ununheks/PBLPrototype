@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TurretManager : MonoBehaviour
@@ -11,6 +12,8 @@ public class TurretManager : MonoBehaviour
     [SerializeField] private Camera _playerCamera;
     [SerializeField] private SpawnerManager _spawnerManager;
 
+    [SerializeField] private TextMeshProUGUI _turretsHadText;
+
     public List<GameObject> turrets;
     public List<GameObject> previewTurret;
 
@@ -20,6 +23,8 @@ public class TurretManager : MonoBehaviour
     private bool _isHolding = false;
     [SerializeField] private bool _isLookingAtTurret = false;
     [SerializeField] private int _lastLookedAtTurret;
+    private int _turretsHad = 0;
+    private int _turretsPlaced = 0;
 
     void Update()
     {
@@ -31,19 +36,31 @@ public class TurretManager : MonoBehaviour
 
         newRotation = Quaternion.Euler(euler);
 
+        if (_isLookingAtTurret && Input.GetKeyDown("v") && !_isHolding)
+        {
+            Destroy(turrets[_lastLookedAtTurret]);
+            //turrets.Remove(turrets[_lastLookedAtTurret]);
+            _turretsPlaced--;
+            _lastLookedAtTurret = 0;
+        }
+
         if (_isLookingAtTurret && Input.GetKeyDown("n") && !_isHolding)
         {
             Destroy(turrets[_lastLookedAtTurret]);
             turrets.Remove(turrets[_lastLookedAtTurret]);
-
+            _turretsPlaced--;
             SpawnPreviewTurret();
+            
             _isHolding = true;
         }
 
         if(!_isHolding && Input.GetKeyDown("n") && !_isLookingAtTurret)
         {
-            SpawnPreviewTurret();
-            _isHolding = true;
+            if (_turretsHad > _turretsPlaced)
+            {
+                SpawnPreviewTurret();
+                _isHolding = true;
+            }
         }
         if(_isHolding)
         {
@@ -59,10 +76,12 @@ public class TurretManager : MonoBehaviour
         if(_isHolding && Input.GetKeyDown("m"))
         {
             SpawnTurret();
+            _turretsPlaced++;
             _isHolding = false;
             Destroy(previewTurret[0]);
             previewTurret.Remove(previewTurret[0]);
         }
+        _turretsHadText.text = "Turrets in Inventory: " + (_turretsHad - _turretsPlaced);
     }
 
     void SpawnTurret()
@@ -115,4 +134,20 @@ public class TurretManager : MonoBehaviour
     {
         return _isHolding;
     }
+
+    public void AddTurret()
+    {
+        _turretsHad = _turretsHad + 1;
+    }
+
+    public void SubtractTurret()
+    {
+        _turretsHad = _turretsHad - 1;
+    }
+
+    public int GetTurretsHad()
+    {
+        return _turretsHad;
+    }
+
 }

@@ -13,6 +13,7 @@ public class UpgradeSystem : MonoBehaviour
     public Button button1;
     public Button button2;
     public Button button3;
+    public Button button4;
     public float interactionDistance = 3f;
 
     private bool isInRange = false;
@@ -23,6 +24,7 @@ public class UpgradeSystem : MonoBehaviour
         button1.onClick.AddListener(UpgradeDamage);
         button2.onClick.AddListener(UpgradeSpeed);
         button3.onClick.AddListener(HealDome);
+        button4.onClick.AddListener(IncreaseOwnedTurrets);
     }
 
     void Update()
@@ -43,6 +45,10 @@ public class UpgradeSystem : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.C))
             {
                 button3.onClick.Invoke();
+            }
+            else if (Input.GetKeyDown(KeyCode.B))
+            {
+                button4.onClick.Invoke();
             }
         }
         else
@@ -83,11 +89,27 @@ public class UpgradeSystem : MonoBehaviour
         Debug.Log("Healed");
         _domeController.TakeDamage(-60);
     }
-    
+
+    void IncreaseOwnedTurrets()
+    {
+        if(_TurretManager.GetTurretsHad() < 3)
+        {
+            if (_gameManager.GetScore() >= 10)
+            {
+                _gameManager.AddPoints(-10);
+                _TurretManager.AddTurret();
+                Debug.Log(_TurretManager.GetTurretsHad());
+            }
+        }
+        
+    }
+
+
     void SetButtonVisibility(bool isVisible)
     {
         button1.gameObject.SetActive(isVisible);
         button2.gameObject.SetActive(isVisible);
         button3.gameObject.SetActive(isVisible);
+        button4.gameObject.SetActive(isVisible);
     }
 }
