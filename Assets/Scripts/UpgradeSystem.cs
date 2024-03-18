@@ -5,12 +5,14 @@ using UnityEngine.UI;
 
 public class UpgradeSystem : MonoBehaviour
 {
+    [SerializeField] private DomeController _domeController;
     public GameManager _gameManager;
     public GameObject player;
     public GameObject buttonObject;
     public TurretManager _TurretManager;
     public Button button1;
     public Button button2;
+    public Button button3;
     public float interactionDistance = 3f;
 
     private bool isInRange = false;
@@ -20,6 +22,7 @@ public class UpgradeSystem : MonoBehaviour
         SetButtonVisibility(false);
         button1.onClick.AddListener(UpgradeDamage);
         button2.onClick.AddListener(UpgradeSpeed);
+        button3.onClick.AddListener(HealDome);
     }
 
     void Update()
@@ -36,6 +39,10 @@ public class UpgradeSystem : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.X))
             {
                 button2.onClick.Invoke();
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                button3.onClick.Invoke();
             }
         }
         else
@@ -66,14 +73,21 @@ public class UpgradeSystem : MonoBehaviour
             foreach (GameObject turret in _TurretManager.turrets)
             {
                 if (turret.GetComponent<TurretController>().reloadSpeed >= 0.2)
-                turret.GetComponent<TurretController>().SetTurretSpeed(turret.GetComponent<TurretController>().reloadSpeed - 0.05f); 
+                    turret.GetComponent<TurretController>().SetTurretSpeed(turret.GetComponent<TurretController>().reloadSpeed - 0.05f); 
             }
         }    
+    }
+
+    void HealDome()
+    {
+        Debug.Log("Healed");
+        _domeController.TakeDamage(-60);
     }
     
     void SetButtonVisibility(bool isVisible)
     {
         button1.gameObject.SetActive(isVisible);
         button2.gameObject.SetActive(isVisible);
+        button3.gameObject.SetActive(isVisible);
     }
 }
