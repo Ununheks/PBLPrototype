@@ -1,27 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DomeController : MonoBehaviour
 {
-    private int hp = 100;
-    
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
+    private float hp = 100;
+    public Image healthBar;
     
     public void TakeDamage(int damage)
     {
         hp -= damage;
+        healthBar.fillAmount = hp / 100;
     }
 
-    public int getHealth()
+    public float getHealth()
     {
         return hp;
     }

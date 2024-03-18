@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,10 +13,13 @@ public class GameManager : MonoBehaviour
     //[SerializeField] private TextMeshProUGUI _timeUI;
     [SerializeField] private TextMeshProUGUI _scoreUI; // Add reference to the score UI text
     [SerializeField] private TextMeshProUGUI _totalScoreUI; // Reference to the total score UI text
+    [SerializeField] private TextMeshProUGUI _gameOver; 
     [SerializeField] private GameObject _gameOverScreen;
     [SerializeField] private List<int> _powerUpCosts;
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private PhaseManager _phaseManager;
     [SerializeField] private DomeController _domeController;
+    private bool isRestarting = false;
 
     private static GameManager _instance;
 
@@ -53,6 +58,7 @@ public class GameManager : MonoBehaviour
         //_timeLeft = _gameTime;
         //UpdateTimeUI(_gameTime);
         UpdateScoreUI(_score); // Update the score UI text when the game starts
+        _gameOver.text = "";
     }
 
     void Update()
@@ -230,8 +236,35 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Dome has been destroyed");
+            gameOver();
         }
+    }
+
+    private void gameOver()
+    {
+        if (!isRestarting)
+        {
+            isRestarting = true;
+            StartCoroutine(RestartCountdown());
+        }
+    }
+    
+    IEnumerator RestartCountdown()
+    {
+        for (int i = 5; i >= 0; i--)
+        {
+            _gameOver.text = "Game over! \nSurvived " + _phaseManager.waveNumber + " wave!\nRestarting in " + i + " seconds";
+            yield return new WaitForSeconds(1f);
+        }
+
+        RestartGame();
+        isRestarting = false; // Reset the flag after the restart is complete
+    }
+    
+    void RestartGame()
+    {
+        // Reload the current scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public float GetScore()
