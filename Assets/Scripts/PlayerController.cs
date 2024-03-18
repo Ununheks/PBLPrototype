@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask _sandMask;
     [SerializeField] private float _highlightRadius = 1.5f; // Radius to highlight blocks around the hit block
 
+    [SerializeField] private TurretManager _turretManager;
+
     private GameObject _highlightedBlock; // Reference to the currently highlighted block
     private Color _originalColor; // Store the original color of the block
 
@@ -33,6 +35,29 @@ public class PlayerController : MonoBehaviour
                 DamageBlocks();
                 _holdTimer = 0f; // Reset the timer after each damage action
             }
+        }
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, _raycastDistance))
+        {
+            for (int i = 0; i < _turretManager.turrets.Count; i++)
+            {
+                if (hit.collider.gameObject == _turretManager.turrets[i])
+                {
+                    _turretManager.SetIsLookingAtTurret(true);
+                    _turretManager.SetLastLookedAtTurret(i);
+                }
+                if (!_turretManager.GetIsHolding() && hit.collider.gameObject != _turretManager.turrets[_turretManager.GetLastLookedAtTurret()])
+                {
+                    _turretManager.SetIsLookingAtTurret(false);
+                }
+            }
+        }
+        else
+        {
+            _turretManager.SetIsLookingAtTurret(false);
         }
     }
 

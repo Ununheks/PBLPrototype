@@ -12080,6 +12080,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   _highlightRadius: 0.5
+  _turretManager: {fileID: 1744777626}
 --- !u!1 &168859847
 GameObject:
   m_ObjectHideFlags: 0
@@ -15605,6 +15606,9 @@ MonoBehaviour:
   _spawnerManager: {fileID: 1913180166}
   turrets: []
   previewTurret: []
+  newRotation: {x: 0, y: 0, z: 0, w: 0}
+  _isLookingAtTurret: 0
+  _lastLookedAtTurret: 0
 --- !u!4 &1744777627
 Transform:
   m_ObjectHideFlags: 0
