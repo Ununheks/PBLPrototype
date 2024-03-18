@@ -9,7 +9,7 @@ using Unity.AI.Navigation;
 public class PhaseManager : MonoBehaviour
 {
     [SerializeField] private int actualPhaze;
-    [SerializeField] private int waveNumber = 0;
+    [SerializeField] public int waveNumber = 0;
     [SerializeField] private SandManager _sandManager;
     [SerializeField] private SpawnerManager _spawnerManager;
     [SerializeField] private GameObject _doors;
@@ -36,7 +36,7 @@ public class PhaseManager : MonoBehaviour
                 //print("zmieniono na faze kopania");
                 _doors.SetActive(false);
                 _sphereCollider.SetActive(true);
-                _timeLeft = 30;
+                _timeLeft = 5;
                 break;
             case 2:
                 //print("zmieniono na faze ustawiania");
@@ -48,7 +48,7 @@ public class PhaseManager : MonoBehaviour
                     StartCoroutine(ReturnControll());
                 }
                 _sphereCollider.SetActive(false);
-                _timeLeft = 30;
+                _timeLeft = 5;
                 break;
             case 3:
                 //print("zmieniono na faze walki");
@@ -64,7 +64,7 @@ public class PhaseManager : MonoBehaviour
                 _sphereCollider.SetActive(true);
                 waveNumber += 1;
                 StartCoroutine(SpawnWaves(3));
-                _timeLeft = 20;
+                _timeLeft = 5;
                 break;
             default:
                 break;
@@ -126,7 +126,7 @@ public class PhaseManager : MonoBehaviour
                 _phaseUI.text = "Setup Phase";
                 break;
             case 3:
-                _phaseUI.text = string.Format("Wave: ", waveNumber);
+                _phaseUI.text = "Wave: " + waveNumber;
                 break;
         }
         
