@@ -11954,11 +11954,13 @@ MonoBehaviour:
   - {fileID: 2683619269829791404, guid: 07c93253435c23b46b8f12e290f77a34, type: 3}
   - {fileID: 2683619269829791404, guid: 06de31039453b1d4d868d5ce750ba445, type: 3}
   - {fileID: 2683619269829791404, guid: 9c2c996c51542294bbc61f9b6dc03906, type: 3}
+  - {fileID: 2683619269829791404, guid: 0494d835021f5b64384c0a8a1aff6fa0, type: 3}
   _blockFrequencies:
-  - 0.9
-  - 0.1
+  - 0.7
+  - 0.19
   - 0
   - 0
+  - 0.01
   _gridWidth: 58
   _gridHeight: 13
   _gridDepth: 58
@@ -13785,7 +13787,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -415, y: -571}
+  m_AnchoredPosition: {x: -434.8, y: -504.6}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &686821570

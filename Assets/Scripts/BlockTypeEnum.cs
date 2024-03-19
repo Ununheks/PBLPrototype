@@ -4,5 +4,6 @@ public enum BlockType
     SAND,
     ROCK,
     BEDROCK,
-    AIR
+    AIR,
+    IRONORE
 }

@@ -84,6 +84,9 @@ public class SandManager : MonoBehaviour
                             case 3:
                                 blockData = new BlockData(BlockType.AIR, 1, columnID, y, 2000, this);
                                 break;
+                            case 4:
+                                blockData = new BlockData(BlockType.IRONORE, 1, columnID, y, 3, this);
+                                break;
                             // Add more cases for additional types if needed
                             default:
                                 Debug.LogError("Invalid prefabIndex!");
@@ -168,6 +171,9 @@ public class SandManager : MonoBehaviour
                 break;
             case BlockType.AIR:
                 prefabToInstantiate = _blockPrefabs[3];
+                break;
+            case BlockType.IRONORE:
+                prefabToInstantiate = _blockPrefabs[4];
                 break;
             // Add more cases for additional types if needed
             default:
@@ -324,6 +330,9 @@ public class SandManager : MonoBehaviour
                         break;
                     case BlockType.AIR:
                         prefabToInstantiate = _blockPrefabs[3];
+                        break;
+                    case BlockType.IRONORE:
+                        prefabToInstantiate = _blockPrefabs[4];
                         break;
                     // Add more cases for additional types if needed
                     default:

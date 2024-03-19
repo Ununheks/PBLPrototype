@@ -92,7 +92,7 @@ public class UpgradeSystem : MonoBehaviour
 
     void IncreaseOwnedTurrets()
     {
-        if(_TurretManager.GetTurretsHad() < 3)
+        if(_TurretManager.GetTurretsHad() < 6)
         {
             if (_gameManager.GetScore() >= 10)
             {
