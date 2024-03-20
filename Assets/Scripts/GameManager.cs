@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PhaseManager _phaseManager;
     [SerializeField] private DomeController _domeController;
     private bool isRestarting = false;
+    public TextMeshProUGUI _ironText;
+
 
     private static GameManager _instance;
 
@@ -59,6 +61,8 @@ public class GameManager : MonoBehaviour
         //UpdateTimeUI(_gameTime);
         UpdateScoreUI(_score); // Update the score UI text when the game starts
         _gameOver.text = "";
+        IronCounter.OnIronOreDestroyed += UpdateIronText;
+
     }
 
     void Update()
@@ -270,5 +274,10 @@ public class GameManager : MonoBehaviour
     public float GetScore()
     {
         return _score;
+    }
+    
+    private void UpdateIronText(int count)
+    {
+        _ironText.text = "Iron Ore: " + count;
     }
 }

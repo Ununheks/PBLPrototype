@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9063112543874850602}
   - component: {fileID: 1817984710558999633}
   - component: {fileID: 566628253579721722}
+  - component: {fileID: 5884299930081993070}
   m_Layer: 8
   m_Name: IronOre
   m_TagString: Block
@@ -118,3 +119,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5884299930081993070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2683619269829791404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ad375cdfb5c8f545adc02c75afe0984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
