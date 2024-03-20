@@ -12662,7 +12662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd19b01e69df9df4ca02c7521e5ad667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _domeController: {fileID: 0}
+  _domeController: {fileID: 821056475}
   _gameManager: {fileID: 203060559}
   player: {fileID: 117486909}
   buttonObject: {fileID: 1168055143}
@@ -12671,6 +12671,7 @@ MonoBehaviour:
   button2: {fileID: 587633567}
   button3: {fileID: 486234728}
   button4: {fileID: 942618142}
+  _ironText: {fileID: 955329140}
   interactionDistance: 3
 --- !u!4 &342281324
 Transform:

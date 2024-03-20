@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ public class UpgradeSystem : MonoBehaviour
     public Button button2;
     public Button button3;
     public Button button4;
+    public TextMeshProUGUI _ironText;
     public float interactionDistance = 3f;
 
     private bool isInRange = false;
@@ -26,7 +28,7 @@ public class UpgradeSystem : MonoBehaviour
         button3.onClick.AddListener(HealDome);
         button4.onClick.AddListener(IncreaseOwnedTurrets);
     }
-
+    
     void Update()
     {
         isInRange = Vector3.Distance(player.transform.position, buttonObject.transform.position) <= interactionDistance;
@@ -59,35 +61,53 @@ public class UpgradeSystem : MonoBehaviour
 
     void UpgradeDamage()
     {
-        if (_gameManager.GetScore() >= 20)
+        if (IronCounter.ironOreDestroyedCount >= 1)
         {
-            _gameManager.AddPoints(-20);
             Debug.Log("Upgraded damage");
             foreach (GameObject turret in _TurretManager.turrets)
             {
                 turret.GetComponent<TurretController>().SetTurretDamage(turret.GetComponent<TurretController>().turretDamage + 20); 
             }
+            IronCounter.ironOreDestroyedCount--;
+            _gameManager.UpdateIronText(IronCounter.ironOreDestroyedCount);
+        }
+        else
+        {
+            Debug.Log("Insufficient funds");
         }
     }
 
     void UpgradeSpeed()
     {
-        if (_gameManager.GetScore() >= 20)
+        if (IronCounter.ironOreDestroyedCount >= 1)
         {
-            _gameManager.AddPoints(-20);
             Debug.Log("Upgraded Speed");
             foreach (GameObject turret in _TurretManager.turrets)
             {
                 if (turret.GetComponent<TurretController>().reloadSpeed >= 0.2)
                     turret.GetComponent<TurretController>().SetTurretSpeed(turret.GetComponent<TurretController>().reloadSpeed - 0.05f); 
             }
-        }    
+            IronCounter.ironOreDestroyedCount--;
+            _gameManager.UpdateIronText(IronCounter.ironOreDestroyedCount);
+        }
+        else
+        {
+            Debug.Log("Insufficient funds");
+        }
     }
 
     void HealDome()
     {
-        Debug.Log("Healed");
-        _domeController.TakeDamage(-60);
+        if (_gameManager.GetScore() >= 20)
+        {
+            _gameManager.AddPoints(-20);
+            Debug.Log("Healed");
+            _domeController.TakeDamage(-60);
+        }
+        else
+        {
+            Debug.Log("Insufficient funds");
+        }
     }
 
     void IncreaseOwnedTurrets()

@@ -276,7 +276,7 @@ public class GameManager : MonoBehaviour
         return _score;
     }
     
-    private void UpdateIronText(int count)
+    public void UpdateIronText(int count)
     {
         _ironText.text = "Iron Ore: " + count;
     }
