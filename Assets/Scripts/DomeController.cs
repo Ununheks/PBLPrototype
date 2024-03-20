@@ -6,13 +6,13 @@ using UnityEngine.UI;
 
 public class DomeController : MonoBehaviour
 {
-    private float hp = 150;
+    private float hp = 300;
     public Image healthBar;
     
     public void TakeDamage(int damage)
     {
         hp -= damage;
-        hp = Math.Clamp(hp, 0, 150);
+        hp = Math.Clamp(hp, 0, 300);
         healthBar.fillAmount = hp / 100;
     }
 

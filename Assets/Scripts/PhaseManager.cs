@@ -36,11 +36,14 @@ public class PhaseManager : MonoBehaviour
                 //print("zmieniono na faze kopania");
                 _doors.SetActive(false);
                 _sphereCollider.SetActive(true);
-                _timeLeft = 30;
+                _timeLeft = 5;
                 break;
             case 2:
                 //print("zmieniono na faze ustawiania");
                 _doors.SetActive(true);
+                
+                PrepareWaves();
+                
                 if (_player.transform.position.y <= 13)
                 {
                     _player.GetComponent<PlayerMovement>().enabled = false;
@@ -48,11 +51,10 @@ public class PhaseManager : MonoBehaviour
                     StartCoroutine(ReturnControll());
                 }
                 _sphereCollider.SetActive(false);
-                _timeLeft = 30;
+                _timeLeft = 5;
                 break;
             case 3:
                 //print("zmieniono na faze walki");
-
                 _navMeshSurface.BuildNavMesh();
                 
                 if (Vector3.Distance(_player.transform.position, new Vector3(0, 14, 0)) > domeSize)
@@ -72,12 +74,46 @@ public class PhaseManager : MonoBehaviour
         updatePhaseUI();
     }
 
+    private void PrepareWaves()
+    {
+        if (waveNumber >= 4)
+        {
+            foreach (var VARIABLE in _spawnerManager.attentionSigns)
+            {
+                if (VARIABLE.GetComponentsInChildren<MeshRenderer>()[0].enabled == false)
+                {
+                    _spawnerManager.changeVisibilityOfSign(VARIABLE);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < waveNumber + 1; i++)
+            {
+                print(_spawnerManager.attentionSigns[i]);
+                
+                if (_spawnerManager.attentionSigns[i].GetComponentsInChildren<MeshRenderer>()[0].enabled == false)
+                {
+                    _spawnerManager.changeVisibilityOfSign(_spawnerManager.attentionSigns[i]);
+                }
+            }
+        }
+    }
+
     IEnumerator SpawnWaves(int numberOfWaves)
     {
+        
+        foreach (var VARIABLE in _spawnerManager.attentionSigns)
+        {
+            if (VARIABLE.GetComponentsInChildren<MeshRenderer>()[0].enabled == true)
+            {
+                _spawnerManager.changeVisibilityOfSign(VARIABLE);
+            }
+        }
+        
         for (int i = 0; i < numberOfWaves; i++)
         {
-            _spawnerManager.SpawnWave();
-            print("test");
+            _spawnerManager.SpawnWave(waveNumber);
             yield return new WaitForSeconds(3);
         }
     }
