@@ -13,6 +13,6 @@ public class IronCounter : MonoBehaviour
     {
         ironOreDestroyedCount++;
         OnIronOreDestroyed?.Invoke(ironOreDestroyedCount);
-        Debug.Log("IronOre destroyed. Count: " + ironOreDestroyedCount);
+        //Debug.Log("IronOre destroyed. Count: " + ironOreDestroyedCount);
     }
 }

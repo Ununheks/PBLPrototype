@@ -36,7 +36,7 @@ public class PhaseManager : MonoBehaviour
                 //print("zmieniono na faze kopania");
                 _doors.SetActive(false);
                 _sphereCollider.SetActive(true);
-                _timeLeft = 5;
+                _timeLeft = 30;
                 break;
             case 2:
                 //print("zmieniono na faze ustawiania");
@@ -51,7 +51,7 @@ public class PhaseManager : MonoBehaviour
                     StartCoroutine(ReturnControll());
                 }
                 _sphereCollider.SetActive(false);
-                _timeLeft = 5;
+                _timeLeft = 30;
                 break;
             case 3:
                 //print("zmieniono na faze walki");
@@ -66,7 +66,7 @@ public class PhaseManager : MonoBehaviour
                 _sphereCollider.SetActive(true);
                 waveNumber += 1;
                 StartCoroutine(SpawnWaves(3));
-                _timeLeft = 5;
+                _timeLeft = 20;
                 break;
             default:
                 break;

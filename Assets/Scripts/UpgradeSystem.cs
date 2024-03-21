@@ -114,9 +114,9 @@ public class UpgradeSystem : MonoBehaviour
     {
         if(_TurretManager.GetTurretsHad() < 6)
         {
-            if (_gameManager.GetScore() >= 10)
+            if (_gameManager.GetScore() >= 75)
             {
-                _gameManager.AddPoints(-10);
+                _gameManager.AddPoints(-75);
                 _TurretManager.AddTurret();
                 Debug.Log(_TurretManager.GetTurretsHad());
             }
