@@ -35,38 +35,39 @@ public class PhaseManager : MonoBehaviour
             case 1:
                 //print("zmieniono na faze kopania");
                 _doors.SetActive(false);
-                _sphereCollider.SetActive(true);
-                _timeLeft = 30;
+                _sphereCollider.SetActive(false);
+                _timeLeft = 90;
+                PrepareWaves();
                 break;
             case 2:
                 //print("zmieniono na faze ustawiania");
-                _doors.SetActive(true);
+                _doors.SetActive(false);
                 
-                PrepareWaves();
                 
-                if (_player.transform.position.y <= 13)
+                
+                /*if (_player.transform.position.y <= 13)
                 {
                     _player.GetComponent<PlayerMovement>().enabled = false;
                     _player.transform.position = new Vector3(0, 14, 0);
                     StartCoroutine(ReturnControll());
-                }
+                }*/
                 _sphereCollider.SetActive(false);
-                _timeLeft = 30;
+                _timeLeft = 0;
                 break;
             case 3:
                 //print("zmieniono na faze walki");
                 _navMeshSurface.BuildNavMesh();
-                
-                if (Vector3.Distance(_player.transform.position, new Vector3(0, 14, 0)) > domeSize)
+
+                /*if (Vector3.Distance(_player.transform.position, new Vector3(0, 14, 0)) > domeSize)
                 {
                     _player.GetComponent<PlayerMovement>().enabled = false;
                     _player.transform.position = new Vector3(0, 14, 0);
                     StartCoroutine(ReturnControll());
-                }
-                _sphereCollider.SetActive(true);
+                }*/
+                _sphereCollider.SetActive(false);
                 waveNumber += 1;
                 StartCoroutine(SpawnWaves(3));
-                _timeLeft = 20;
+                _timeLeft = 0;
                 break;
             default:
                 break;
@@ -156,10 +157,10 @@ public class PhaseManager : MonoBehaviour
         switch (actualPhaze)
         {
             case 1:
-                _phaseUI.text = "Digging Phase";
+                _phaseUI.text = "Time Until Attack";
                 break;
             case 2:
-                _phaseUI.text = "Setup Phase";
+                _phaseUI.text = "Time Until Attack";
                 break;
             case 3:
                 _phaseUI.text = "Wave: " + waveNumber;

@@ -6,21 +6,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _raycastDistance = 10f;
     [SerializeField] private float _damage = 1f;
     [SerializeField] private LayerMask _sandMask;
-    [SerializeField] private float _highlightRadius = 1.5f; // Radius to highlight blocks around the hit block
+    [SerializeField] private float _highlightRadius = 0.5f; // Radius to highlight blocks around the hit block
 
     [SerializeField] private TurretManager _turretManager;
 
     private GameObject _highlightedBlock; // Reference to the currently highlighted block
     private Color _originalColor; // Store the original color of the block
 
-    private bool _canHold = false;
+    private bool _canHold = true;
     private float _holdTimer = 0f;
     private float _holdInterval = 0.1f; // Time interval between each damage action while holding
+
+    public float propulsionForce = 3f;
 
     void Update()
     {
         HighlightLogic();
-
+        Debug.Log(_highlightRadius);
         // Check if _canHold is false and mouse button is down
         if (!_canHold && Input.GetMouseButtonDown(0) && _highlightedBlock != null)
         {
@@ -58,6 +60,11 @@ public class PlayerController : MonoBehaviour
         else
         {
             _turretManager.SetIsLookingAtTurret(false);
+        }
+
+        if (Input.GetKeyDown("r"))
+        {
+            StartCoroutine(PropelOverTime());
         }
     }
 
@@ -98,7 +105,7 @@ public class PlayerController : MonoBehaviour
             _originalColor = renderer.material.color;
 
             // Darken the original color
-            Color highlightColor = _originalColor * 0.5f; // Adjust the multiplier as needed for the desired darkness
+            Color highlightColor = _originalColor * 0.8f; // Adjust the multiplier as needed for the desired darkness
 
             // Apply the highlight color
             renderer.material.color = highlightColor;
@@ -162,5 +169,38 @@ public class PlayerController : MonoBehaviour
     public void AllowHold()
     {
         _canHold = true;
+    }
+
+    System.Collections.IEnumerator PropelOverTime()
+    {
+        float elapsedTime = 0f;
+        float duration = 0.4f; // Adjust this to control the duration of the upward movement
+
+        // Store initial Y position
+        float initialY = transform.position.y;
+
+        // Calculate target Y position
+        float targetY = initialY + propulsionForce;
+
+        while (elapsedTime < duration)
+        {
+            // Calculate interpolation factor (0 to 1) based on elapsed time
+            float t = elapsedTime / duration;
+
+            // Interpolate between initial and target Y positions
+            float newY = Mathf.Lerp(initialY, targetY, t);
+
+            // Update the object's position
+            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+
+            // Increment elapsed time by deltaTime
+            elapsedTime += Time.deltaTime;
+
+            // Wait for the end of the frame
+            yield return null;
+        }
+
+        // Ensure the object reaches the exact target position
+        transform.position = new Vector3(transform.position.x, targetY, transform.position.z);
     }
 }

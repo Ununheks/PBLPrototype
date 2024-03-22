@@ -14,6 +14,9 @@ public class SandManager : MonoBehaviour
     private List<List<BlockController>> _blockColumns;
     private List<List<BlockData>> _blockDataColumns;
 
+    public int prefabIndex;
+    public bool secondTime = false;
+
     void Start()
     {
         _blockColumns = new List<List<BlockController>>();
@@ -48,14 +51,56 @@ public class SandManager : MonoBehaviour
                 columnID++;
                 for (int y = 0; y < _gridHeight; y++)
                 {
-                    // Choose a random block prefab index based on the provided frequencies
-                    int prefabIndex = ChooseRandomPrefabIndex();
+                    int lastPrefab = prefabIndex;
+                    int randomInt = Random.Range(0, 5);
+                    if (lastPrefab == 4)
+                    {
+                        if (secondTime)
+                        {
+                            randomInt = Random.Range(0, 5);
+                            if (randomInt == 0)
+                            {
+                                prefabIndex = 4;
+                            }
+                            else
+                            {
+                                prefabIndex = ChooseRandomPrefabIndex();
+                                secondTime = false;
+                            }
+                        }
+                        else
+                        {
+                            if (randomInt == 0 || randomInt == 1 || randomInt == 2)
+                            {
+                                prefabIndex = 4;
+                                secondTime = true;
+                            }
+                            else
+                            {
+                                // Choose a random block prefab index based on the provided frequencies
+                                prefabIndex = ChooseRandomPrefabIndex();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        prefabIndex = ChooseRandomPrefabIndex();
+                    }
 
                     // Create an instance of the appropriate subclass based on the prefabIndex
                     BlockData blockData = null;
 
                     int SphereRange = 10;
-                    
+
+
+                    //if (y == _gridHeight - 1 && !((x == offsetX || x == offsetX + 1 || x == offsetX - 1) && (z == offsetZ || z == offsetZ + 1 || z == offsetZ - 1)))
+                    //{
+                    //    blockData = new BlockData(BlockType.SAND, 1, columnID, y, 2, this);
+                    //}
+                    // if (y == _gridHeight - 2 && !((x == offsetX || x == offsetX + 2 || x == offsetX - 2) && (z == offsetZ || z == offsetZ + 2 || z == offsetZ - 2)))
+                    //{
+                    //    blockData = new BlockData(BlockType.SAND, 1, columnID, y, 2, this);
+                    //}
                     if (y == _gridHeight - 3 && !((x == offsetX || x == offsetX + 1 || x == offsetX - 1) && (z == offsetZ || z == offsetZ + 1 || z == offsetZ - 1)))
                     {
                         blockData = new BlockData(BlockType.BEDROCK, 1, columnID, y, 2000, this);
@@ -73,19 +118,40 @@ public class SandManager : MonoBehaviour
                         switch (prefabIndex)
                         {
                             case 0: // SandController
-                                blockData = new BlockData(BlockType.SAND, 1, columnID, y, 1, this);
+                                if (y == _gridHeight - 2 || y == _gridHeight - 1)
+                                {
+                                    blockData = new BlockData(BlockType.SAND, 0, columnID, y, 7, this);
+                                }
+                                else
+                                {
+                                    blockData = new BlockData(BlockType.SAND, 0, columnID, y, 2, this);
+                                }
                                 break;
                             case 1: // StoneController
-                                blockData = new BlockData(BlockType.ROCK, 1, columnID, y, 1, this);
+                                if (y == _gridHeight - 2 || y == _gridHeight - 1)
+                                {
+                                    blockData = new BlockData(BlockType.ROCK, 0, columnID, y, 10, this);
+                                }
+                                else
+                                {
+                                    blockData = new BlockData(BlockType.ROCK, 0, columnID, y, 4, this);
+                                }
                                 break;
                             case 2:
-                                blockData = new BlockData(BlockType.BEDROCK, 1, columnID, y, 2000, this);
+                                blockData = new BlockData(BlockType.BEDROCK, 0, columnID, y, 2000, this);
                                 break;
                             case 3:
-                                blockData = new BlockData(BlockType.AIR, 1, columnID, y, 2000, this);
+                                blockData = new BlockData(BlockType.AIR, 0, columnID, y, 2000, this);
                                 break;
                             case 4:
-                                blockData = new BlockData(BlockType.IRONORE, 1, columnID, y, 3, this);
+                                if (y == _gridHeight - 2 || y == _gridHeight - 1)
+                                {
+                                    blockData = new BlockData(BlockType.SAND, 0, columnID, y, 10, this);
+                                }
+                                else
+                                {
+                                    blockData = new BlockData(BlockType.IRONORE, 1, columnID, y, 4, this);
+                                }
                                 break;
                             // Add more cases for additional types if needed
                             default:

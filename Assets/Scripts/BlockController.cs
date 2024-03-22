@@ -37,7 +37,7 @@ public abstract class BlockController : MonoBehaviour
             Color originalColor = renderer.material.color;
 
             // Calculate the darken amount based on HP percentage
-            float darkenAmount = (1f - hpPercentage)/2f;
+            float darkenAmount = (1f - hpPercentage)/10f;
             // Darken the original color
             Color newColor = originalColor - new Color(darkenAmount, darkenAmount, darkenAmount);
 

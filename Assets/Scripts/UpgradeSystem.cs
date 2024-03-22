@@ -18,6 +18,9 @@ public class UpgradeSystem : MonoBehaviour
     public TextMeshProUGUI _ironText;
     public float interactionDistance = 3f;
 
+  
+
+
     private bool isInRange = false;
 
     void Start()
@@ -38,19 +41,22 @@ public class UpgradeSystem : MonoBehaviour
             SetButtonVisibility(true);
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                button1.onClick.Invoke();
+                _gameManager.AttemptToPurchasePowerUpWithEffects(5, 0);
             }
             else if (Input.GetKeyDown(KeyCode.X))
             {
-                button2.onClick.Invoke();
+                _gameManager.AttemptToPurchasePowerUpWithEffects(6, 0);
             }
             else if (Input.GetKeyDown(KeyCode.C))
             {
-                button3.onClick.Invoke();
+                _gameManager.AttemptToPurchasePowerUpWithEffects(7, 0);
             }
             else if (Input.GetKeyDown(KeyCode.B))
             {
-                button4.onClick.Invoke();
+                if (_TurretManager.GetTurretsHad() < 10)
+                {
+                    _gameManager.AttemptToPurchasePowerUpWithEffects(8, 0);
+                }
             }
         }
         else
@@ -59,67 +65,42 @@ public class UpgradeSystem : MonoBehaviour
         }
     }
 
-    void UpgradeDamage()
+    public void UpgradeDamage()
     {
-        if (IronCounter.ironOreDestroyedCount >= 1)
-        {
+
             Debug.Log("Upgraded damage");
             foreach (GameObject turret in _TurretManager.turrets)
             {
                 turret.GetComponent<TurretController>().SetTurretDamage(turret.GetComponent<TurretController>().turretDamage + 20); 
             }
-            IronCounter.ironOreDestroyedCount--;
             _gameManager.UpdateIronText(IronCounter.ironOreDestroyedCount);
-        }
-        else
-        {
-            Debug.Log("Insufficient funds");
-        }
     }
 
-    void UpgradeSpeed()
+    public void UpgradeSpeed()
     {
-        if (IronCounter.ironOreDestroyedCount >= 1)
-        {
+
             Debug.Log("Upgraded Speed");
             foreach (GameObject turret in _TurretManager.turrets)
             {
                 if (turret.GetComponent<TurretController>().reloadSpeed >= 0.2)
                     turret.GetComponent<TurretController>().SetTurretSpeed(turret.GetComponent<TurretController>().reloadSpeed - 0.05f); 
             }
-            IronCounter.ironOreDestroyedCount--;
             _gameManager.UpdateIronText(IronCounter.ironOreDestroyedCount);
-        }
-        else
-        {
-            Debug.Log("Insufficient funds");
-        }
     }
 
-    void HealDome()
+    public void HealDome()
     {
-        if (_gameManager.GetScore() >= 20)
-        {
-            _gameManager.AddPoints(-20);
             Debug.Log("Healed");
             _domeController.TakeDamage(-60);
-        }
-        else
-        {
-            Debug.Log("Insufficient funds");
-        }
     }
 
-    void IncreaseOwnedTurrets()
+    public void IncreaseOwnedTurrets()
     {
-        if(_TurretManager.GetTurretsHad() < 6)
+        if(_TurretManager.GetTurretsHad() < 10)
         {
-            if (_gameManager.GetScore() >= 75)
-            {
-                _gameManager.AddPoints(-75);
                 _TurretManager.AddTurret();
                 Debug.Log(_TurretManager.GetTurretsHad());
-            }
+            
         }
         
     }
@@ -131,5 +112,10 @@ public class UpgradeSystem : MonoBehaviour
         button2.gameObject.SetActive(isVisible);
         button3.gameObject.SetActive(isVisible);
         button4.gameObject.SetActive(isVisible);
+    }
+
+    public bool GetIsInRange()
+    {
+        return isInRange;
     }
 }

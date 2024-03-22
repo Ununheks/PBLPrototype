@@ -81,7 +81,7 @@ public class TurretManager : MonoBehaviour
             Destroy(previewTurret[0]);
             previewTurret.Remove(previewTurret[0]);
         }
-        _turretsHadText.text = "Turrets in Inventory: " + (_turretsHad - _turretsPlaced);
+        _turretsHadText.text = "Turrets in Inventory: " + (_turretsHad - _turretsPlaced) + "/10";
     }
 
     void SpawnTurret()
